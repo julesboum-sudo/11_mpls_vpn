@@ -1,0 +1,14 @@
+! ===== BATIBO (CE) =====
+enable
+configure terminal
+hostname BATIBO
+int e3/0
+ ip address 172.16.117.30 255.255.255.224
+ description BATIBO ----> vrf GETEL (e4/1) Bamenda
+ no shutdown
+ exit
+int e0/0
+ ip address 192.168.117.1 255.255.255.0
+ description BATIBO ----> LAN GETEL
+ no shutdown
+ exit

@@ -1,0 +1,73 @@
+
+enable
+configure terminal
+hostname GAROUA
+no ip domain lookup
+line console 0
+ exec-timeout 0 0
+ logging synchronous
+ exit
+
+int e0/0
+ ip address 4.4.4.4 255.255.255.240
+ description GAROUA -----> NGAOUNDERE
+ no shutdown
+ exit
+int e0/1
+ ip address 1.1.1.4 255.255.255.240
+ description GAROUA -----> MAROUA
+ no shutdown
+ exit
+int e1/1
+ ip address 20.20.34.4 255.255.255.240
+ description GAROUA -----> YAOUNDE
+ no shutdown
+ exit
+
+int lo0
+ ip address 22.22.22.22 255.255.255.255
+ no shutdown
+ exit
+
+router ospf 4
+ network 1.1.1.0 0.0.0.15 area 0
+ network 4.4.4.0 0.0.0.15 area 0
+ network 22.22.22.22 0.0.0.0 area 0
+ network 20.20.34.0 0.0.0.15 area 0
+ exit
+
+ip cef
+mpls label range 200 299
+mpls label protocol ldp
+mpls ldp router-id loopback0
+
+interface e0/0
+ mpls ip
+ exit
+interface e0/1
+ mpls ip
+ exit
+interface e1/1
+ mpls ip
+ exit
+
+
+ip vrf HN
+ rd 65005:100
+ route-target both 65005:100
+ exit
+ip vrf GCI
+ rd 65005:200
+ route-target import 65005:200
+ route-target export 65005:200
+ exit
+
+
+int e4/0
+ ip vrf forwarding HN
+ ip address 192.168.144.1 255.255.255.240
+ exit
+int e4/1
+ ip vrf forwarding GCI
+ ip address 192.168.104.1 255.255.255.240
+ exit

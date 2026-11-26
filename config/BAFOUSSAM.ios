@@ -1,0 +1,54 @@
+
+enable
+configure terminal
+hostname BAFOUSSAM
+no ip domain lookup
+line console 0
+ exec-timeout 0 0
+ logging synchronous
+ exit
+
+int e0/0
+ ip address 10.10.10.9 255.255.255.240
+ description BAFOUSSAM -----> BUEA
+ no shutdown
+ exit
+int e0/1
+ ip address 10.100.100.9 255.255.255.240
+ description BAFOUSSAM -----> NGAOUNDERE
+ no shutdown
+ exit
+int e1/3
+ ip address 20.20.39.9 255.255.255.240
+ description BAFOUSSAM -----> YAOUNDE
+ no shutdown
+ exit
+int lo0
+ ip address 55.55.55.55 255.255.255.255
+ no shutdown
+ exit
+
+router ospf 9
+ network 10.10.10.0 0.0.0.15 area 0
+ network 10.100.100.0 0.0.0.15 area 0
+ network 20.20.39.0 0.0.0.15 area 0
+ network 55.55.55.55 0.0.0.0 area 0
+ exit
+ 
+ip cef
+mpls label range 500 599
+mpls label protocol ldp
+mpls ldp router-id loopback0
+
+interface e0/0
+ mpls ip
+ exit
+interface e0/1
+ mpls ip
+ exit
+interface e1/3
+ mpls ip
+ exit
+
+
+do wr

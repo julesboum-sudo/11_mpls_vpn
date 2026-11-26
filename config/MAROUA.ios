@@ -1,0 +1,52 @@
+enable
+configure terminal
+hostname MAROUA
+no ip domain lookup
+line console 0
+ exec-timeout 0 0
+ logging synchronous
+ exit
+
+int e0/0
+ ip address 1.1.1.1 255.255.255.240
+ description MAROUA -----> GAROUA
+ no shutdown
+ exit
+int e0/1
+ ip address 5.5.5.1 255.255.255.240
+ description MAROUA -----> BAMENDA
+ no shutdown
+ exit
+int e1/2
+ ip address 20.20.31.1 255.255.255.240
+ description MAROUA -----> YAOUNDE
+ no shutdown
+ exit
+int lo0
+ ip address 11.11.11.11 255.255.255.255
+ no shutdown
+ exit
+
+router ospf 1
+ network 1.1.1.0 0.0.0.15 area 0
+ network 5.5.5.0 0.0.0.15 area 0
+ network 11.11.11.11 0.0.0.0 area 0
+ network 20.20.31.0 0.0.0.15 area 0
+ exit
+
+ip cef
+mpls label range 100 199
+mpls label protocol ldp
+mpls ldp router-id loopback0
+
+interface e0/0
+ mpls ip
+ exit
+interface e0/1
+ mpls ip
+ exit
+interface e1/2
+ mpls ip
+ exit
+
+do wr

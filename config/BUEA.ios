@@ -1,0 +1,54 @@
+
+enable
+configure terminal
+hostname BUEA
+no ip domain lookup
+line console 0
+ exec-timeout 0 0
+ logging synchronous
+ exit
+
+int e0/1
+ ip address 9.9.9.6 255.255.255.240
+ description BUEA -----> BAMENDA
+ no shutdown
+ exit
+
+int e0/2
+ ip address 10.10.10.6 255.255.255.240
+ description BUEA -----> BAFOUSSAM
+ no shutdown
+ exit
+
+int e1/0
+ ip address 20.20.36.6 255.255.255.240
+ description BUEA -----> YAOUNDE
+ no shutdown
+ exit
+
+int lo0
+ ip address 44.44.44.44 255.255.255.255
+ no shutdown
+ exit
+
+router ospf 6
+ network 9.9.9.0 0.0.0.15 area 0
+ network 10.10.10.0 0.0.0.15 area 0
+ network 20.20.36.0 0.0.0.15 area 0
+ network 44.44.44.44 0.0.0.0 area 0
+ exit
+
+ip cef
+mpls label range 400 499
+mpls label protocol ldp
+mpls ldp router-id loopback0
+
+interface e0/1
+ mpls ip
+ exit
+interface e0/2
+ mpls ip
+ exit
+interface e1/0
+ mpls ip
+ exit

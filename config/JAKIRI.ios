@@ -1,0 +1,14 @@
+! ===== JAKIRI (CE) =====
+enable
+configure terminal
+hostname JAKIRI
+int e3/0
+ ip address 172.16.107.30 255.255.255.224
+ description JAKIRI ----> vrf MECA (e4/0) Bamenda
+ no shutdown
+ exit
+int e0/0
+ ip address 192.168.107.1 255.255.255.0
+ description JAKIRI ----> LAN MECA
+ no shutdown
+ exit

@@ -1,0 +1,14 @@
+! ===== BELO (CE) =====
+enable
+configure terminal
+hostname BELO
+int e3/0
+ ip address 172.16.17.30 255.255.255.224
+ description BELO ----> vrf MSP (e4/2) Bamenda
+ no shutdown
+ exit
+int e0/0
+ ip address 192.168.17.1 255.255.255.0
+ description BELO ----> LAN MSP
+ no shutdown
+ exit

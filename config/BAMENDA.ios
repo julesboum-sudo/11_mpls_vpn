@@ -1,0 +1,81 @@
+
+enable
+configure terminal
+hostname BAMENDA
+no ip domain lookup
+line console 0
+ exec-timeout 0 0
+ logging synchronous
+ exit
+
+int e0/2
+ ip address 5.5.5.7 255.255.255.240
+ description BAMENDA -----> MAROUA
+ no shutdown
+ exit
+int e0/0
+ ip address 9.9.9.7 255.255.255.240
+ description BAMENDA -----> BUEA
+ no shutdown
+ exit
+int e1/1
+ ip address 20.20.37.7 255.255.255.240
+ description BAMENDA -----> YAOUNDE
+ no shutdown
+ exit
+int lo0
+ ip address 33.33.33.33 255.255.255.255
+ no shutdown
+ exit
+
+router ospf 7
+ network 5.5.5.0 0.0.0.15 area 0
+ network 9.9.9.0 0.0.0.15 area 0
+ network 20.20.37.0 0.0.0.15 area 0
+ network 33.33.33.33 0.0.0.0 area 0
+ exit
+
+ip cef
+mpls label range 300 399
+mpls label protocol ldp
+mpls ldp router-id loopback0
+
+interface e0/2
+ mpls ip
+ exit
+interface e0/0
+ mpls ip
+ exit
+interface e1/1
+ mpls ip
+ exit
+
+
+ip vrf GETEL
+ rd 65005:100
+ route-target both 65005:100
+ exit
+ip vrf MECA
+ rd 65005:200
+ route-target import 65005:200
+ route-target export 65005:200
+ exit
+ip vrf MSP
+ rd 65005:300
+ route-target both 65005:300
+ exit
+
+
+int e4/2
+ ip vrf forwarding MSP
+ ip address 172.16.17.1 255.255.255.224
+ exit
+int e4/0
+ ip vrf forwarding MECA
+ ip address 172.16.107.1 255.255.255.224
+ exit
+int e4/1
+ ip vrf forwarding GETEL
+ ip address 172.16.117.1 255.255.255.224
+ exit
+do wr
